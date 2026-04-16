@@ -1,9 +1,10 @@
 // server create krna
 const express = require("express");
 const noteModel = require("./models/notemodel")
+const cors = require("cors")
 
 const app = express();
-
+app.use(cors())
 app.use(express.json());
 
 // POST/api/notes
