@@ -29,3 +29,20 @@ html {
   max-width: 20rem;
   color: rgb(255, 253, 249);
 }
+
+.note-create-form{
+  display: flex;
+  gap: 1rem;
+  padding-block: 1rem;
+  padding-inline: 3rem;
+}
+
+.btn{
+  padding: 0.5rem 0.5rem;
+  border: none;
+  border-radius: 0.7rem;
+  background-color: #212121;
+  color: rgb(255, 253, 249);
+  cursor: pointer;
+  margin: 3px;
+}

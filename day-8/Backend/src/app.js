@@ -2,10 +2,16 @@
 const express = require("express");
 const noteModel = require("./models/notemodel")
 const cors = require("cors")
+const path = require("path")
 
 const app = express();
 app.use(cors())
 app.use(express.json());
+
+// request aayega toh public folder ke andar se static file serve krna hai
+// public folder ke andar index.html file hai toh wo serve krna hai
+// http://localhost:3000/assets/index-a0Tcu7_O.js
+app.use(express.static("./public"))
 
 // POST/api/notes
 // create new note and save data in mongoose;
@@ -56,6 +62,10 @@ app.patch("/api/notes/:id", async(req, res) => {
     res.status(200).json({
         message: "note updated successfully"
     })
+})
+
+app.use('*name', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', '/public/index.html'))
 })
 
 module.exports = app;
