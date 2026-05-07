@@ -19,14 +19,73 @@ authRouter.post("/register", async(req, res)=>{
     const user = await userModel.create({
         name,
         email,
-        password: crypto.creaateHash('sha256').update(password).digest('hex')
+        password: crypto.createHash('sha256').update(password).digest('hex')
     })
 
     const token = jwt.sign({
         id: user._id,
     }, process.env.JWT_SECRET, {expiresIn: "1h"})
+
+    res.cookie("token", token)
+
+    res.status(201).json({
+        message: "User registered successfully",
+        user:{
+            name: user.name,
+            email: user.email,
+        }
+    })
 })
 
 
+authRouter.post("/get-me",async(req, res)=>{
+    const token = req.cookies.token
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+    // console.log(decoded)
+
+    const user = await userModel.findById(decoded.id)
+    res.json({
+        name:user.name,
+        email:user.email
+    })
+})
+
+
+authRouter.post("/login",async(req, res)=>{
+    const {email,password}=req.body;
+
+    const user = await userModel.findOne({email})
+
+    if(!user){
+       return res.status(404).json({
+        message:"User not found"
+       })
+    }
+
+    const hash = crypto.createHash("sha256").update(password).digest('hex')
+
+    const isPasswordValid = hash === user.password
+
+    if(!isPasswordValid){
+        return res.status(401).json({
+            message:"Invalid Password"
+        })
+    }
+
+    const token = jwt.sign({
+        id: user._id,
+    }, process.env.JWT_SECRET, {expiresIn: "1h"})
+
+    res.cookie("token", token)
+
+    res.status(201).json({
+        message: "User loged in successfully",
+        user:{
+            name: user.name,
+            email: user.email,
+        }
+    })
+})
 module.exports = authRouter;
